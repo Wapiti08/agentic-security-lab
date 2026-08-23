@@ -1,2 +1,2 @@
 # agentic-security-lab
-Attack, observe, and secure agentic AI and MCP systems.
+Agentic Security Lab is a Python- and Rust-based security workbench for testing agentic AI and MCP applications. It combines automated attack simulation, sandboxed tool execution, runtime telemetry, vulnerability analysis, and detection validation to help security researchers reproduce and mitigate risks including prompt injection, tool poisoning, excessive agency, data exfiltration, and software supply-chain attacks.
