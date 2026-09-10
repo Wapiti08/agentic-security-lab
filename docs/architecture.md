@@ -108,6 +108,22 @@ interpret different resources.
 
 ## Evidence and Data Handling
 
+### Filesystem Path Contract
+
+The first filesystem detector accepts POSIX absolute paths only. Target paths
+and authorized roots must already have been resolved by the execution boundary;
+missing values, NUL characters, relative paths, and remaining `..` components
+cannot be evaluated.
+
+Under this lab-specific contract, all leading slashes (including exactly `//`)
+are treated as a single `/`, and repeated interior separators are collapsed.
+The detector applies the same conversion to targets and authorized roots using
+pure path operations, without accessing the filesystem or resolving symlinks.
+Upstream authorization and execution must adopt this same interpretation rather
+than passing double-leading-slash paths to platform-specific resolution.
+Original arguments and received path evidence are retained unchanged; this
+conversion is for comparison and does not prove that symlinks were resolved.
+
 - Store metadata or a digest instead of full content whenever possible.
 - Synthetic secrets should contain unique markers so disclosure can be proven
   without relying on real sensitive data.
@@ -130,4 +146,3 @@ A completed run is valid only when:
 
 These invariants allow integration tests to distinguish a safe block from
 missing telemetry or an incomplete run.
-
