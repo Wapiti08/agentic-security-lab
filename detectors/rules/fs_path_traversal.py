@@ -1,40 +1,13 @@
-from abc import ABC, abstractmethod
-from dataclasses import dataclass
-from enum import Enum
 from pathlib import PurePosixPath
 
-class DetectionStatus(str, Enum):
-    DETECTED = "detected"
-    NOT_DETECTED = "not_detected"
-    NOT_EVALUATED = "not_evaluated"
-    ERROR = "error"
+from detectors.engine import (
+    DetectionResult,
+    DetectionRule,
+    DetectionStatus,
+    FileAccessData,
+    SecurityEvent,
+)
 
-
-@dataclass(frozen=True)
-class FileAccessData:
-    # none means missing, empty list means no authroized directories
-    resolved_path: str | None
-    authorized_roots: tuple[str, ...] | None
-
-
-# frozen to avoid accidental mutation of the event data after creation
-@dataclass(frozen=True)
-class SecurityEvent:
-    # UUID type
-    event_id: str
-    resource_type: str
-    operation: str
-    data: FileAccessData | None = None
-
-
-@dataclass(frozen=True)
-class DetectionResult:
-    event_id: str
-    status: DetectionStatus
-    rule_id: str
-    reason: str
-    target_path: str | None = None
-    authorized_roots: tuple[str, ...] | None = None
 
 def _is_valid_resolved_path(value: object) -> bool:
     """Check if the given value is a valid resolved path."""
@@ -64,20 +37,6 @@ def _is_within_any_root(path: str, roots: tuple[str, ...]) -> bool:
     return any(target.is_relative_to(_normalize_posix_path(root)) for root in roots)
 
 
-class DetectionRule(ABC):
-    rule_id: str
-    description: str
-
-    @abstractmethod
-    def supports(self, event: SecurityEvent) -> bool:
-        """Check if the rule supports the given event."""
-        raise NotImplementedError
-    
-    @abstractmethod
-    def evaluate(self, event: SecurityEvent) -> DetectionResult:
-        """Evaluate the given event and return a DetectionResult."""
-        raise NotImplementedError
-    
 class FilePathOutsideScopeRule(DetectionRule):
     rule_id = "FS_PATH_OUTSIDE_SCOPE"
     description = "Detect file access outside authorized roots."
