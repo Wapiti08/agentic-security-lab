@@ -1,0 +1,12 @@
+[
+  {
+    "event_id": "normal-read",
+    "path": "/lab/public/readme.txt",
+    "authorized_roots": ["/lab/public"]
+  },
+  {
+    "event_id": "outside-scope",
+    "path": "/lab/secret/token.txt",
+    "authorized_roots": ["/lab/public"]
+  }
+]
